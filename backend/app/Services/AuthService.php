@@ -8,6 +8,9 @@ use App\Models\User;
 class AuthService implements AuthServiceInterface {
 
     public function register(array $data): array {
+        //Create a new user if it doesn't exist.
+        //Generate a special token for the user.
+
         return [];
     }
 

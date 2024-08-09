@@ -4,19 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\AuthServiceInterface;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRegisterRequest;
 
 class AuthController extends Controller {
     public function __construct(
         protected AuthServiceInterface $authService
     ) {}
 
-    public function register(Request $request) {
-        return $this->authService->register([]);
+    //What should this action return?
+    //It doesn't return an error when not validated, just a regular 200.
+    public function register(UserRegisterRequest $request) {
+        //Get the data (validated)
+        $data = $request->validated();
+        // $result = $this->authService->register($data);
 
-        //Get the data?
-        //Validate the request data
-        //Create a new user if it doesn't exist.
-        //Generate a special token for the user.
+        return response()->json($data);
         //Return the token along with username and language?.
     }
 
