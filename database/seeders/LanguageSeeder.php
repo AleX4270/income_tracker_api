@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Language;
 use App\Types\LanguageType;
 
-class LanguageSeeder extends Seeder
-{
+class LanguageSeeder extends Seeder {
     /**
      * Run the database seeds.
      */

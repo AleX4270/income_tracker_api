@@ -9,8 +9,7 @@ use App\Types\CurrencyType;
 
 use function PHPSTORM_META\map;
 
-class CurrencySeeder extends Seeder
-{
+class CurrencySeeder extends Seeder {
     /**
      * Run the database seeds.
      */

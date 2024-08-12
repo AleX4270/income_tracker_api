@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class AuthController extends Controller {
@@ -37,7 +36,6 @@ class AuthController extends Controller {
 
     public function logout(Request $request): ApiResponse {
         $result = $this->authService->logout($request->user());
-        
         return new ApiResponse($result);
     }
 }
