@@ -7,6 +7,7 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\CurrencySeeder;
 use Database\Seeders\IncomeCategorySeeder;
+use Database\Seeders\IncomeCategoryTranslationSeeder;
 
 class DatabaseSeeder extends Seeder {
     /**
@@ -17,7 +18,8 @@ class DatabaseSeeder extends Seeder {
             UserSeeder::class,
             LanguageSeeder::class,
             CurrencySeeder::class,
-            IncomeCategorySeeder::class
+            IncomeCategorySeeder::class,
+            IncomeCategoryTranslationSeeder::class
         ]);
     }
 }

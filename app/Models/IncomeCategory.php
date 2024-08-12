@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Types\LanguageType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class IncomeCategory extends Model {
     use HasFactory;
@@ -12,4 +15,18 @@ class IncomeCategory extends Model {
     protected $attributes = [
         'is_active' => 1
     ];
+
+    public function translations(): HasMany {
+        return $this->hasMany(IncomeCategoryTranslation::class);
+    }
+
+    public function polishTranslation(): HasOne {
+        return $this->hasOne(IncomeCategoryTranslation::class)
+                    ->where('language_id', Language::where('symbol', LanguageType::PL)->first()->id);
+    }
+
+    public function englishTranslation(): HasOne {
+        return $this->hasOne(IncomeCategoryTranslation::class)
+                    ->where('language_id', Language::where('symbol', LanguageType::EN)->first()->id);
+    }
 }
