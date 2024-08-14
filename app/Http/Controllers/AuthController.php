@@ -28,7 +28,7 @@ class AuthController extends Controller {
         }
         else {
             return new ApiResponse(
-                httpCode: Response::HTTP_UNAUTHORIZED, 
+                httpCode: Response::HTTP_UNAUTHORIZED,
                 errorMessage: $result['error']
             );
         }

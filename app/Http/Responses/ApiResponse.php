@@ -28,6 +28,6 @@ class ApiResponse implements Responsable {
             $response['data'] = $this->data;
         }
 
-        return response()->json($response);
+        return response()->json($response, $this->httpCode);
     }
 }
