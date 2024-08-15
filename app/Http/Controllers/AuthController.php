@@ -14,7 +14,6 @@ class AuthController extends Controller {
         protected AuthServiceInterface $authService
     ) {}
 
-    //What should this action return?
     public function register(UserRegisterRequest $request): ApiResponse {
         $result = $this->authService->register($request->validated());
         return new ApiResponse($result);
@@ -22,7 +21,7 @@ class AuthController extends Controller {
 
     public function login(UserLoginRequest $request): ApiResponse {
         $result = $this->authService->login($request->validated());
-
+        
         if(empty($result['error'])) {
             return new ApiResponse($result);
         }

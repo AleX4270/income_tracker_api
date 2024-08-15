@@ -17,9 +17,7 @@ class ApiResponse implements Responsable {
     }
 
     public function toResponse($request): JsonResponse {
-        $response = [
-            'status' => $this->httpCode,
-        ];
+        $response = [];
         
         if($this->httpCode >= 400) {
             $response['error'] = $this->errorMessage;
