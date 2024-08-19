@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -113,23 +111,33 @@ class UserTest extends TestCase {
         );
     }
 
-    // public function test_user_successful_logout(): void {
-    //     //Login some user
-    //     //Send the logout request with that user data
-    //     //check the response
-    //     $user = User::factory()->create();
+    /**
+     * User logout and route tests.
+     */
+    public function test_user_successful_logout(): void {
+        $user = User::factory()->create();
 
-    //     $response = $this->actingAs($user, 'web')
-    //     ->postJson('/api/auth/logout', []);
+        $response = $this->actingAs($user)
+        ->getJson('/api/auth/logout', []);
 
-    //     $response
-    //     ->assertStatus(200)
-    //     ->assertJson(fn (AssertableJson $json) => 
-    //         $json
-    //         ->has('data', fn (AssertableJson $json) => 
-    //             $json
-    //             ->has('message')
-    //         )
-    //     );
-    // }
+        $response
+        ->assertStatus(200)
+        ->assertJson(fn (AssertableJson $json) => 
+            $json
+            ->has('data', fn (AssertableJson $json) => 
+                $json
+                ->has('message')
+            )
+        );
+    }
+
+    public function test_unauthenticated_user_cannot_access_protected_route(): void {
+        $response = $this->getJson('/api/auth/logout', []);
+
+        $response
+        ->assertStatus(401)
+        ->assertJson(fn (AssertableJson $json) =>
+            $json->has('message')
+        );
+    }
 }
