@@ -37,4 +37,23 @@ class AuthController extends Controller {
         $result = $this->authService->logout($request->user());
         return new ApiResponse($result);
     }
+
+    public function verifyEmail(Request $request): ApiResponse {
+        $userId = $request->input('id');
+
+        if(empty($userId)) {
+            return new ApiResponse(
+                httpCode: Response::HTTP_BAD_REQUEST,
+                errorMessage: 'Invalid parameters. User id cannot be empty.'
+            );
+        }
+
+        $result = $this->authService->verifyEmail($userId);
+        return new ApiResponse($result);
+    }
+
+    public function resendEmail(Request $request): ApiResponse {
+        $result = $this->authService->resendEmail($request->user());
+        return new ApiResponse($result);
+    }
 }
