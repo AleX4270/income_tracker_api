@@ -6,26 +6,20 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 
 class ApiResponse implements Responsable {
-    protected int $httpCode;
-    protected array $data;
-    protected string $errorMessage;
+    public int $status;
+    public array $data;
+    public string $message;
 
-    public function __construct(array $data = [], int $httpCode = 200, string $errorMessage = 'An error occured.') {
-        $this->httpCode = $httpCode;
+    public function __construct(array $data = [], int $status = 200, string $message = '') {
+        $this->status = $status;
         $this->data = $data;
-        $this->errorMessage = $errorMessage;
+        $this->message = $message;
     }
 
     public function toResponse($request): JsonResponse {
-        $response = [];
-        
-        if($this->httpCode >= 400) {
-            $response['error'] = $this->errorMessage;
-        }
-        else {
-            $response['data'] = $this->data;
-        }
-
-        return response()->json($response, $this->httpCode);
+        return response()->json([
+            'data' => $this->data,
+            'message' => $this->message
+        ], $this->status);
     }
 }

@@ -5,24 +5,21 @@ namespace App\Services;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
 use Exception;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Symfony\Component\Process\ExecutableFinder;
 
 class AuthService implements AuthServiceInterface {
 
-    public function register(array $data): array {
+    public function register(array $data): User {
         $user = new User();
         $user->name = $data['username'];
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
         $user->save();
-
         $user->sendEmailVerificationNotification();
 
-        return [
-            'message' => 'User registered successfully.'
-        ];
+        return $user;
     }
 
     public function login(array $data): array {
@@ -41,51 +38,57 @@ class AuthService implements AuthServiceInterface {
         }
         catch(Exception $e) {
             //Log this error to laravel?
-
-            return [
-                'error' => $e->getMessage(),
-            ];
+            return [];
         }
     }
 
-    public function logout(User $user): array {
+    public function logout(User $user): bool {
         //Consider deleting only the "request" token in the future (mobile app support?)
-        $user->tokens()->delete();
-
-        return [
-            'message' => 'User logged out successfully!'
-        ];
+        return $user->tokens()->delete();
     }
 
-    public function verifyEmail(int $userId): array {
-        if(empty($userId)) {
-            return [
-                'message' => 'User logged out successfully!'
-            ];
+    public function verifyEmail(int $userId): bool {
+        try {
+            $user = User::where('id', $userId)->first();
+            if($user->hasVerifiedEmail() || !$user->markEmailAsVerified()) {
+                throw new Exception('Could not mark the user\'s email as verified or the email has been already verified.');
+            }
+    
+            return true;
         }
-        $user = User::where('id', $userId)->first();
-
-        if($user->hasVerifiedEmail()) {
-            $message = 'Email already verified.';
+        catch(Exception $e) {
+            //TODO: Log?
+            return false;
         }
-
-        $user->markEmailAsVerified();
-        $message = 'Email verified successfully.';
-        return [
-            'message' => $message
-        ];
     }
 
-    public function resendEmail(User $user): array {
-        if($user->hasVerifiedEmail()) {
-            return [
-                'message' => 'User\'s email is already verified. '
-            ];
-        }
-        $user->sendEmailVerificationNotification();
+    public function resendEmail(User $user): bool {
+        try {
+            if($user->hasVerifiedEmail() || !$user->sendEmailVerificationNotification()) {
+                throw new Exception('Could not resend the verification email or the email has been already verified.');
+            }
 
-        return [
-            'message'=> 'Email verification link has been sent.'
-        ];
+            return true;
+        }
+        catch(Exception $e) {
+            //TODO: Log?
+            return false;
+        }
+    }
+
+    public function resetPassword(int $userId): array {
+        // try {
+        //     $user = User::where('id', $userId)->first();
+        //     $token = Password::getRepository()->create($user);
+    
+        //     if(empty($user) || empty($token)) {
+        //         //error
+        //     }
+        //     $user->sendPasswordResetNotification($token);
+        // }
+        // catch(Exception $e) {
+        //     //Log to laravel
+        //     return ['error' => $e->getMessage()];
+        // }
     }
 }
