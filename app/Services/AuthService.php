@@ -5,21 +5,28 @@ namespace App\Services;
 use App\Interfaces\AuthServiceInterface;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Symfony\Component\Process\ExecutableFinder;
+use Illuminate\Support\Facades\DB;
 
 class AuthService implements AuthServiceInterface {
 
-    public function register(array $data): User {
-        $user = new User();
-        $user->name = $data['username'];
-        $user->email = $data['email'];
-        $user->password = Hash::make($data['password']);
-        $user->save();
-        $user->sendEmailVerificationNotification();
+    public function register(array $data): User | bool {
+        try {
+            $user = new User();
+            $user->name = $data['username'];
+            $user->email = $data['email'];
+            $user->password = Hash::make($data['password']);
+            $user->save();
+            $user->sendEmailVerificationNotification();
 
-        return $user;
+            return $user;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 
     public function login(array $data): array {
@@ -37,7 +44,7 @@ class AuthService implements AuthServiceInterface {
             ];
         }
         catch(Exception $e) {
-            //Log this error to laravel?
+            Log::error($e->getMessage());
             return [];
         }
     }
@@ -57,7 +64,7 @@ class AuthService implements AuthServiceInterface {
             return true;
         }
         catch(Exception $e) {
-            //TODO: Log?
+            Log::error($e->getMessage());
             return false;
         }
     }
@@ -71,24 +78,58 @@ class AuthService implements AuthServiceInterface {
             return true;
         }
         catch(Exception $e) {
-            //TODO: Log?
+            Log::error($e->getMessage());
             return false;
         }
     }
 
-    public function resetPassword(int $userId): array {
-        // try {
-        //     $user = User::where('id', $userId)->first();
-        //     $token = Password::getRepository()->create($user);
+    public function requestPasswordReset(int $userId): bool {
+        try {
+            $user = User::where('id', $userId)->first();
+            $token = Password::getRepository()->create($user);
     
-        //     if(empty($user) || empty($token)) {
-        //         //error
-        //     }
-        //     $user->sendPasswordResetNotification($token);
-        // }
-        // catch(Exception $e) {
-        //     //Log to laravel
-        //     return ['error' => $e->getMessage()];
-        // }
+            if(empty($user) || empty($token)) {
+                throw new Exception('Could not create a password reset token.');
+            }
+            
+            $user->sendPasswordResetNotification($token);
+            return true;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function resetPassword(array $data): bool {
+        try {
+            $token = DB::table('password_reset_tokens')->where('token', $data['token'])->first();
+
+            $expirationTime = now()->subMinutes(config('auth.passwords.users.expire'));
+            if($token->created_at < $expirationTime) {
+                throw new Exception('Provided token is expired.');
+            }
+
+            if(empty($token)) {
+                throw new Exception('Provided token is invalid or password has been reset before.');
+            }
+
+            $user = User::where('email', $token->email)->first();
+
+            if(empty($user)) {
+                throw new Exception('Provided token is invalid or password has been reset before.');
+            }
+
+            $user->password = Hash::make($data['password']);
+            $user->save();
+            
+            DB::table('password_reset_tokens')->where('token', $data['token'])->delete();
+
+            return true;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 }

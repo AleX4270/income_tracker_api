@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PasswordResetRequest;
 use App\Interfaces\AuthServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRegisterRequest;
@@ -98,17 +99,49 @@ class AuthController extends Controller {
         return $response;
     }
 
-    public function resetPassword(Request $request): ApiResponse {
-        // $userId = $request->input('id');
+    public function requestPasswordReset(Request $request): ApiResponse {
+        $response = new ApiResponse();
+        $userId = $request->input('id');
 
-        // if(empty($userId)) {
-        //     return new ApiResponse(
-        //         httpCode: Response::HTTP_BAD_REQUEST,
-        //         errorMessage: 'Invalid parameters. User id cannot be empty.'
-        //     );
-        // }
+        if(empty($userId)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments! User id must be provided.';
+            return $response; 
+        }
 
-        // $result = $this->authService->resetPassword($userId);
-        // return new ApiResponse($result);
+        $result = $this->authService->requestPasswordReset($userId);
+
+        if($result) {
+            $response->message = 'Password reset link has been sent.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'Could not send the password reset link.';
+        }
+
+        return $response;
+    }
+
+    public function resetPassword(PasswordResetRequest $request): ApiResponse {
+        $response = new ApiResponse();
+        $data = $request->validated();
+
+        if(empty($data)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments! Token and a new password must be provided.';
+            return $response; 
+        }
+
+        $result = $this->authService->resetPassword($data);
+
+        if($result) {
+            $response->message = 'Password has been reset.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'Could not reset the password.';
+        }
+
+        return $response;
     }
 }
