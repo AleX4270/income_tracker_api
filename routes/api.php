@@ -17,3 +17,7 @@ Route::prefix('auth')->group(function() {
     Route::get('/password/request-reset', [AuthController::class, 'requestPasswordReset'])->name('password.reset');
     Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 });
+
+Route::prefix('income')->group(function() {
+    //TODO: Finish
+});

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Interfaces\AuthServiceInterface;
+use App\Interfaces\IncomeServiceInterface;
 use App\Services\AuthService;
+use App\Services\IncomeService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void {
         app()->bind(AuthServiceInterface::class, function($app) {
             return new AuthService();
+        });
+        
+        app()->bind(IncomeServiceInterface::class, function($app) {
+            return new IncomeService();
         });
     }
 
