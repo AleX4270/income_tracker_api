@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\IncomeController;
 
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
@@ -20,4 +21,5 @@ Route::prefix('auth')->group(function() {
 
 Route::prefix('income')->group(function() {
     //TODO: Finish
+    Route::get('', [IncomeController::class, 'list']);
 });

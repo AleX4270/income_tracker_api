@@ -29,8 +29,8 @@ class IncomeListRequest extends FormRequest
             'description' => ['string'],
             'sortDir' => ['string'],
             'sortColumn' => ['string'],
-            'page' => ['numeric', 'min:0'],
-            'pageSize' => ['numeric', 'min:0']
+            'page' => ['required', 'numeric', 'min:0'],
+            'pageSize' => ['required', 'numeric', 'min:0']
         ];
     }
 }
