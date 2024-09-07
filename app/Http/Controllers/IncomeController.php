@@ -86,7 +86,7 @@ class IncomeController extends Controller {
         $params = $request->validated();
 
         if(!empty($params['id'])) {
-            // return $this->update($params);
+            return $this->update($params);
         }
         else {
             return $this->create($params);
@@ -118,11 +118,51 @@ class IncomeController extends Controller {
         return $response;
     }
 
-    // public function update(array $params): ApiResponse {
-        
-    // }
+    public function update(array $params): ApiResponse {
+        $response = new ApiResponse();
 
-    // public function delete(int $id): ApiResponse {
-        
-    // }
+        if(empty($params)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. Params must be provided.';
+            return $response;
+        }
+
+        $id = $this->incomeService->update($params);
+
+        if(!empty($id)) {
+            $response->data = [
+                'id' => $id
+            ];
+            $response->message = 'Income updated successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to update an income entry.';
+        }
+
+        return $response;
+    }
+
+    public function delete(Request $request): ApiResponse {
+        $response = new ApiResponse();
+        $id = $request->input('id');
+
+        if(empty($id)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. Id must be provided.';
+            return $response;
+        }
+
+        $isDeleted = $this->incomeService->delete($id);
+
+        if(!empty($isDeleted)) {
+            $response->message = 'Income deleted successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to delete an income entry.';
+        }
+
+        return $response;
+    }
 }

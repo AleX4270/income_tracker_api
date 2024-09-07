@@ -25,7 +25,8 @@ class IncomeService implements IncomeServiceInterface {
                 'income.description'
             )
             ->join('users', 'income.user_id', '=', 'users.id')
-            ->join('currency', 'income.currency_id', '=', 'currency.id');
+            ->join('currency', 'income.currency_id', '=', 'currency.id')
+            ->where('income.is_active', 1);
 
             if(!empty($params['userId'])) {
                 $query->where('income.user_id', intval($params['userId']));
@@ -105,10 +106,42 @@ class IncomeService implements IncomeServiceInterface {
     }
 
     public function update(array $params): int | bool {
+        try {
+            $income = Income::where('id', $params['id'])->first();
+            $income->user_id = auth()->user()->id;
+            $income->currency_id = $params['currencyId'];
+            $income->amount = $params['amount'];
+            $income->date_received = $params['dateReceived'];
+            $income->description = $params['description'];
+            $income->save();
 
+            IncomeCategoryIncome::where('income_id', $income->id)->delete();
+            foreach(explode(",", $params['categoryIds']) as $categoryId) {
+                $incomeCategoryIncome = new IncomeCategoryIncome();
+                $incomeCategoryIncome->income_id = $income->id;
+                $incomeCategoryIncome->income_category_id = intval($categoryId);
+                $incomeCategoryIncome->save();
+            }
+
+            return $income->id;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 
-    public function delete(): bool {
+    public function delete(int $id): bool {
+        try {
+            $income = Income::where('id', $id)->first();
+            $income->is_active = 0;
+            $income->save();
 
+            return true;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 }

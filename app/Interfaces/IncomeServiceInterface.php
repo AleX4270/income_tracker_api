@@ -10,5 +10,5 @@ interface IncomeServiceInterface {
     public function details(int $id): Income | bool;
     public function create(array $params): int | bool;
     public function update(array $params): int | bool;
-    public function delete(): bool; 
+    public function delete(int $id): bool; 
 }

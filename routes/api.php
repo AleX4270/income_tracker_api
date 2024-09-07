@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\IncomeController;
+use App\Models\IncomeCategory;
 
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
@@ -20,7 +21,8 @@ Route::prefix('auth')->group(function() {
 });
 
 Route::prefix('income')->group(function() {
-    //TODO: Finish
     Route::get('', [IncomeController::class, 'index'])->middleware('auth:sanctum');
     Route::post('/form', [IncomeController::class, 'form'])->middleware('auth:sanctum');
+    Route::put('/form', [IncomeController::class, 'form'])->middleware('auth:sanctum');
+    Route::delete('', [IncomeController::class, 'delete'])->middleware('auth:sanctum');
 });
