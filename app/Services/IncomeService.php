@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Interfaces\IncomeServiceInterface;
 use App\Models\Income;
+use App\Models\IncomeCategoryIncome;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class IncomeService implements IncomeServiceInterface { 
+class IncomeService implements IncomeServiceInterface {
 
     //TODO: Make sure those filters are implemented correctly.
     public function list(array $params): LengthAwarePaginator | bool {
@@ -68,7 +69,7 @@ class IncomeService implements IncomeServiceInterface {
         }
     }
 
-    public function details(int $id): Income | bool{
+    public function details(int $id): Income | bool {
         try {
             return Income::where('id', intval($id))->first();
         }
@@ -78,11 +79,32 @@ class IncomeService implements IncomeServiceInterface {
         }
     }
 
-    public function create(): bool {
+    public function create(array $params): int | bool {
+        try {
+            $income = new Income();
+            $income->user_id = auth()->user()->id;
+            $income->currency_id = $params['currencyId'];
+            $income->amount = $params['amount'];
+            $income->date_received = $params['dateReceived'];
+            $income->description = $params['description'];
+            $income->save();
 
+            foreach(explode(",", $params['categoryIds']) as $categoryId) {
+                $incomeCategoryIncome = new IncomeCategoryIncome();
+                $incomeCategoryIncome->income_id = $income->id;
+                $incomeCategoryIncome->income_category_id = intval($categoryId);
+                $incomeCategoryIncome->save();
+            }
+
+            return $income->id;
+        }
+        catch(Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 
-    public function update(): bool {
+    public function update(array $params): int | bool {
 
     }
 

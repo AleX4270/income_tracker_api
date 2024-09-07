@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 interface IncomeServiceInterface {
     public function list(array $params): LengthAwarePaginator | bool;
     public function details(int $id): Income | bool;
-    public function create(): bool;
-    public function update(): bool;
+    public function create(array $params): int | bool;
+    public function update(array $params): int | bool;
     public function delete(): bool; 
 }

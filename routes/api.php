@@ -21,5 +21,6 @@ Route::prefix('auth')->group(function() {
 
 Route::prefix('income')->group(function() {
     //TODO: Finish
-    Route::get('', [IncomeController::class, 'index']);
+    Route::get('', [IncomeController::class, 'index'])->middleware('auth:sanctum');
+    Route::post('/form', [IncomeController::class, 'form'])->middleware('auth:sanctum');
 });
