@@ -21,5 +21,5 @@ Route::prefix('auth')->group(function() {
 
 Route::prefix('income')->group(function() {
     //TODO: Finish
-    Route::get('', [IncomeController::class, 'list']);
+    Route::get('', [IncomeController::class, 'index']);
 });
