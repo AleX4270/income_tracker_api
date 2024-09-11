@@ -29,9 +29,9 @@ class CurrencyController extends Controller {
     //Think about a better way to return data with the paginator response.
     private function list(CurrencyListRequest $request): ApiResponse {
         $response = new ApiResponse();
-        $params = $request->input();
+        $filterSet = $request->input();
 
-        $result = $this->currencyService->list($params);
+        $result = $this->currencyService->list($filterSet);
 
         if(!empty($result)) {
             $response->data = [
