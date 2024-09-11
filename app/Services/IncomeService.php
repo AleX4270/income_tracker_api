@@ -72,7 +72,13 @@ class IncomeService implements IncomeServiceInterface {
 
     public function details(int $id): Income | bool {
         try {
-            return Income::where('id', intval($id))->first();
+            $income = Income::where('id', intval($id))->first();
+
+            if(empty($income)) {
+                return false;
+            }
+
+            return $income;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());

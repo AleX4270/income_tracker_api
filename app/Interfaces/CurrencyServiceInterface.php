@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface CurrencyServiceInterface {
     public function list(array $filterSet): LengthAwarePaginator | bool;
-    public function details(int $id): Currency | bool;
+    public function details(int $currencyId): Currency | bool;
     public function create(array $filterSet): int | bool;
     public function update(array $filterSet): int | bool;
     public function delete(int $id): bool; 

@@ -61,6 +61,7 @@ class IncomeController extends Controller {
 
         if(!empty($income)) {
             $response->data = [
+                'id' => $income->id,
                 'username' => $income->user->name,
                 'currencySymbol' => $income->currency->symbol,
                 'amount' => $income->amount,

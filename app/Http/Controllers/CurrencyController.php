@@ -61,22 +61,15 @@ class CurrencyController extends Controller {
 
         if(!empty($currency)) {
             $response->data = [
-                // 'username' => $income->user->name,
-                // 'currencySymbol' => $income->currency->symbol,
-                // 'amount' => $income->amount,
-                // 'date_received' => $income->date_received,
-                // 'description' => $income->description,
-                // 'date_creation' => $income->created_at,
-                // 'categorySymbols' => $income->categories->map(function($item) {
-                //     //TODO: Get symbol for now. In the future determine the language id.
-                //     return $item->symbol;
-                // })
+                'id' => $currency->id,
+                'symbol' => $currency->symbol,
+                'shortSymbol' => $currency->short_symbol
             ];
             $response->message = 'Currency details loaded successfully.';
         }
         else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
-            $response->message = 'An error occured while trying to load the currency details.';
+            $response->message = 'An error occured while trying to load the currency details or there is no currency with such id.';
         }
 
         return $response;

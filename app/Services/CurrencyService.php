@@ -39,9 +39,15 @@ class CurrencyService implements CurrencyServiceInterface {
         }
     }
 
-    public function details(int $id): Currency | bool {
+    public function details(int $currencyId): Currency | bool {
         try {
-            // return Income::where('id', intval($id))->first();
+            $currency = Currency::where('id', intval($currencyId))->first();
+
+            if(empty($currency)) {
+                return false;
+            }
+
+            return $currency;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());
