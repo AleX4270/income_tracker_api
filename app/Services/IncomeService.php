@@ -117,12 +117,19 @@ class IncomeService implements IncomeServiceInterface {
     public function update(array $params): int | bool {
         try {
             $income = Income::where('id', $params['id'])->first();
+            if(empty($income)) {
+                throw new Exception('An income with provided id does not exist.');
+            }
+
             $income->user_id = auth()->user()->id;
             $income->currency_id = $params['currencyId'];
             $income->amount = $params['amount'];
             $income->date_received = $params['dateReceived'];
             $income->description = $params['description'];
-            $income->save();
+            
+            if(!$income->save()) {
+                throw new Exception('Could not update an income entry.');
+            }
 
             IncomeCategoryIncome::where('income_id', $income->id)->delete();
             foreach(explode(",", $params['categoryIds']) as $categoryId) {

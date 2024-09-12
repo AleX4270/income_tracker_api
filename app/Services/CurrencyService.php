@@ -76,25 +76,24 @@ class CurrencyService implements CurrencyServiceInterface {
         }
     }
 
-    public function update(array $filterSet): int | bool {
+    public function update(array $fieldSet): int | bool {
         try {
-            // $income = Income::where('id', $params['id'])->first();
-            // $income->user_id = auth()->user()->id;
-            // $income->currency_id = $params['currencyId'];
-            // $income->amount = $params['amount'];
-            // $income->date_received = $params['dateReceived'];
-            // $income->description = $params['description'];
-            // $income->save();
+            $currency = Currency::where('id', $fieldSet['id'])->first();
+            if(empty($currency)) {
+                throw new Exception('A currency with provided id does not exist.');
+            }
 
-            // IncomeCategoryIncome::where('income_id', $income->id)->delete();
-            // foreach(explode(",", $params['categoryIds']) as $categoryId) {
-            //     $incomeCategoryIncome = new IncomeCategoryIncome();
-            //     $incomeCategoryIncome->income_id = $income->id;
-            //     $incomeCategoryIncome->income_category_id = intval($categoryId);
-            //     $incomeCategoryIncome->save();
-            // }
+            $currency->symbol = $fieldSet['symbol'];
+            
+            if(!empty($fieldSet['shortSymbol'])) {
+                $currency->short_symbol = $fieldSet['shortSymbol'];
+            }
 
-            // return $income->id;
+            if(!$currency->save()) {
+                throw new Exception('Could not update a currency entry.');
+            }
+
+            return $currency->id;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());
