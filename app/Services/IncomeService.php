@@ -94,7 +94,10 @@ class IncomeService implements IncomeServiceInterface {
             $income->amount = $params['amount'];
             $income->date_received = $params['dateReceived'];
             $income->description = $params['description'];
-            $income->save();
+            
+            if(!$income->save()) {
+                throw new Exception('Could not create a new income entry.');
+            }
 
             foreach(explode(",", $params['categoryIds']) as $categoryId) {
                 $incomeCategoryIncome = new IncomeCategoryIncome();

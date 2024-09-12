@@ -55,24 +55,20 @@ class CurrencyService implements CurrencyServiceInterface {
         }
     }
 
-    public function create(array $filterSet): int | bool {
+    public function create(array $fieldSet): int | bool {
         try {
-            // $income = new Income();
-            // $income->user_id = auth()->user()->id;
-            // $income->currency_id = $params['currencyId'];
-            // $income->amount = $params['amount'];
-            // $income->date_received = $params['dateReceived'];
-            // $income->description = $params['description'];
-            // $income->save();
+            $currency = new Currency();
+            $currency->symbol = $fieldSet['symbol'];
+            
+            if(!empty($fieldSet['shortSymbol'])) {
+                $currency->short_symbol = $fieldSet['shortSymbol'];
+            }
+            
+            if(!$currency->save()) {
+                throw new Exception('Could not create a new currency entry.');
+            }
 
-            // foreach(explode(",", $params['categoryIds']) as $categoryId) {
-            //     $incomeCategoryIncome = new IncomeCategoryIncome();
-            //     $incomeCategoryIncome->income_id = $income->id;
-            //     $incomeCategoryIncome->income_category_id = intval($categoryId);
-            //     $incomeCategoryIncome->save();
-            // }
-
-            // return $income->id;
+            return $currency->id;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());

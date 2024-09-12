@@ -4,14 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CurrencyFormRequest extends FormRequest
-{
+class CurrencyFormRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return false;
+    public function authorize(): bool {
+        return true;
     }
 
     /**
@@ -19,10 +17,11 @@ class CurrencyFormRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [
-            //
+            'id' => ['numeric', 'min:1'],
+            'symbol' => ['required', 'string', 'min:1'],
+            'shortSymbol' => ['nullable', 'string', 'min:1']
         ];
     }
 }

@@ -86,16 +86,17 @@ class CurrencyController extends Controller {
         }
     }
 
-    public function create(array $params): ApiResponse {
+    //TODO: Protect this form null or empty values.
+    public function create(array $fieldSet): ApiResponse {
         $response = new ApiResponse();
 
-        if(empty($params)) {
+        if(empty($fieldSet)) {
             $response->status = Response::HTTP_BAD_REQUEST;
             $response->message = 'Invalid arguments. Params must be provided.';
             return $response;
         }
 
-        $id = $this->currencyService->create($params);
+        $id = $this->currencyService->create($fieldSet);
 
         if(!empty($id)) {
             $response->data = [
