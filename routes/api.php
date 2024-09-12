@@ -32,4 +32,5 @@ Route::prefix('currency')->group(function() {
     Route::get('', [CurrencyController::class, 'index'])->middleware('auth:sanctum');
     Route::post('/form', [CurrencyController::class, 'form'])->middleware('auth:sanctum');
     Route::put('/form', [CurrencyController::class, 'form'])->middleware('auth:sanctum');
+    Route::delete('', [CurrencyController::class, 'delete'])->middleware('auth:sanctum');
 });

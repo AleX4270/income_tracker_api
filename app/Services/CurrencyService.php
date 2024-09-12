@@ -103,11 +103,18 @@ class CurrencyService implements CurrencyServiceInterface {
 
     public function delete(int $id): bool {
         try {
-            // $income = Income::where('id', $id)->first();
-            // $income->is_active = 0;
-            // $income->save();
+            $currency = Currency::where('id', $id)->first();
+            if(empty($currency)) {
+                throw new Exception('A currency with provided id does not exist.');
+            }
 
-            // return true;
+            $currency->is_active = 0;
+            
+            if(!$currency->save()) {
+                throw new Exception('Could not update a currency entry.');
+            }
+
+            return true;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());

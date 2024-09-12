@@ -7,6 +7,7 @@ use App\Http\Requests\CurrencyListRequest;
 use App\Interfaces\CurrencyServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class CurrencyController extends Controller {
@@ -144,15 +145,18 @@ class CurrencyController extends Controller {
 
     public function delete(Request $request): ApiResponse {
         $response = new ApiResponse();
-        $id = $request->input('id');
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'numeric']
+        ]);
 
-        if(empty($id)) {
+        if($validator->fails()) {
             $response->status = Response::HTTP_BAD_REQUEST;
-            $response->message = 'Invalid arguments. Id must be provided.';
+            $response->message = 'Invalid arguments. Numeric id must be provided.';
             return $response;
         }
-
-        $isDeleted = $this->currencyService->delete($id);
+        
+        $validatedData = $validator->validated();
+        $isDeleted = $this->currencyService->delete($validatedData['id']);
 
         if(!empty($isDeleted)) {
             $response->message = 'Currency deleted successfully.';

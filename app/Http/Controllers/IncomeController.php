@@ -7,6 +7,7 @@ use App\Interfaces\IncomeServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Requests\IncomeListRequest;
 use App\Http\Requests\IncomeFormRequest;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class IncomeController extends Controller {
@@ -152,15 +153,18 @@ class IncomeController extends Controller {
 
     public function delete(Request $request): ApiResponse {
         $response = new ApiResponse();
-        $id = $request->input('id');
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'numeric']
+        ]);
 
-        if(empty($id)) {
+        if($validator->fails()) {
             $response->status = Response::HTTP_BAD_REQUEST;
-            $response->message = 'Invalid arguments. Id must be provided.';
+            $response->message = 'Invalid arguments. Numeric id must be provided.';
             return $response;
         }
 
-        $isDeleted = $this->incomeService->delete($id);
+        $validatedData = $validator->validated();
+        $isDeleted = $this->incomeService->delete($validatedData['id']);
 
         if(!empty($isDeleted)) {
             $response->message = 'Income deleted successfully.';
