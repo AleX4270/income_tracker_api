@@ -84,13 +84,19 @@ class IncomeController extends Controller {
     }
 
     public function form(IncomeFormRequest $request): ApiResponse {
+        $response = new ApiResponse();
         $params = $request->validated();
 
-        if(!empty($params['id'])) {
+        if(!empty($params['id']) && $request->isMethod(Request::METHOD_PUT)) {
             return $this->update($params);
         }
-        else {
+        else if(empty($params['id']) && $request->isMethod(Request::METHOD_POST)) {
             return $this->create($params);
+        }
+        else {
+            $response->status = Response::HTTP_METHOD_NOT_ALLOWED;
+            $response->message = 'Invalid method.';
+            return $response;
         }
     }
 

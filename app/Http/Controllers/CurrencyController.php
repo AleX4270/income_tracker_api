@@ -76,17 +76,22 @@ class CurrencyController extends Controller {
     }
 
     public function form(CurrencyFormRequest $request): ApiResponse {
+        $response = new ApiResponse();
         $params = $request->validated();
 
-        if(!empty($params['id'])) {
+        if(!empty($params['id']) && $request->isMethod(Request::METHOD_PUT)) {
             return $this->update($params);
         }
-        else {
+        else if(empty($params['id']) && $request->isMethod(Request::METHOD_POST)) {
             return $this->create($params);
+        }
+        else {
+            $response->status = Response::HTTP_METHOD_NOT_ALLOWED;
+            $response->message = 'Invalid method.';
+            return $response;
         }
     }
 
-    //TODO: Protect this form null or empty values.
     public function create(array $fieldSet): ApiResponse {
         $response = new ApiResponse();
 
