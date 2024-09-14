@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Interfaces\AuthServiceInterface;
 use App\Interfaces\CurrencyServiceInterface;
+use App\Interfaces\IncomeCategoryServiceInterface;
 use App\Interfaces\IncomeServiceInterface;
 use App\Services\AuthService;
 use App\Services\CurrencyService;
+use App\Services\IncomeCategoryService;
 use App\Services\IncomeService;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
 
         app()->bind(CurrencyServiceInterface::class, function($app) {
             return new CurrencyService();
+        });
+
+        app()->bind(IncomeCategoryServiceInterface::class, function($app) {
+            return new IncomeCategoryService();
         });
     }
 

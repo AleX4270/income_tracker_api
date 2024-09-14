@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\IncomeCategoryController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\IncomeController;
 use App\Models\IncomeCategory;
@@ -33,4 +34,8 @@ Route::prefix('currency')->group(function() {
     Route::post('/form', [CurrencyController::class, 'form'])->middleware('auth:sanctum');
     Route::put('/form', [CurrencyController::class, 'form'])->middleware('auth:sanctum');
     Route::delete('', [CurrencyController::class, 'delete'])->middleware('auth:sanctum');
+});
+
+Route::prefix('incomeCategory')->group(function() {
+    Route::get('', [IncomeCategoryController::class, 'index'])->middleware('auth:sanctum');
 });

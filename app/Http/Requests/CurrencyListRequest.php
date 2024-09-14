@@ -24,7 +24,7 @@ class CurrencyListRequest extends FormRequest
             'sortDir' => ['string'],
             'sortColumn' => ['string'],
             'page' => ['required', 'numeric', 'min:0'],
-            'pageSize' => ['required', 'numeric', 'min:0']
+            'pageSize' => ['required', 'numeric', 'min:1']
         ];
     }
 }
