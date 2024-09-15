@@ -22,7 +22,8 @@ class IncomeCategoryService implements IncomeCategoryServiceInterface {
             )
             ->join('income_category_translation', 'income_category_translation.income_category_id', '=', 'income_category.id')
             ->join('language', 'language.id', '=', 'income_category_translation.language_id')
-            ->where('language.id', $filterSet['languageId'])
+            ->where('language.symbol', app()->getLocale())
+            ->where('language.is_active', 1)
             ->where('income_category.is_active', 1);
 
             if(!empty($filterSet['symbol'])) {
@@ -51,15 +52,15 @@ class IncomeCategoryService implements IncomeCategoryServiceInterface {
         }
     }
 
-    public function details(int $currencyId): IncomeCategory | bool {
+    public function details(int $incomeCategoryId): IncomeCategory | bool {
         try {
-            // $currency = Currency::where('id', intval($currencyId))->first();
+            $incomeCategory = IncomeCategory::where('id', intval($incomeCategoryId))->first();
 
-            // if(empty($currency)) {
-            //     return false;
-            // }
+            if(empty($incomeCategory)) {
+                return false;
+            }
 
-            // return $currency;
+            return $incomeCategory;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());

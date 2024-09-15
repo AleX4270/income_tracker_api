@@ -6,6 +6,8 @@ use App\Http\Requests\IncomeCategoryListRequest;
 use App\Interfaces\IncomeCategoryServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
+use App\Types\LanguageType;
+use Symfony\Component\HttpFoundation\Response;
 
 class IncomeCategoryController extends Controller {
     public function __construct(
@@ -47,30 +49,31 @@ class IncomeCategoryController extends Controller {
     }
 
     private function details($id): ApiResponse {
-        // $response = new ApiResponse();
+        $response = new ApiResponse();
 
-        // if(empty($id)) {
-        //     $response->status = Response::HTTP_BAD_REQUEST;
-        //     $response->message = 'Invalid arguments. Currency id must be provided.';
-        //     return $response;
-        // }
+        if(empty(intval($id))) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. A numeric income category id must be provided.';
+            return $response;
+        }
+        
+        $incomeCategory = $this->incomeCategoryService->details($id);
 
-        // $currency = $this->currencyService->details($id);
+        if(!empty($incomeCategory)) {
+            $response->data = [
+                'id' => $incomeCategory->id,
+                'symbol' => $incomeCategory->symbol,
+                'name' => $incomeCategory->translation->name,
+                'description' => $incomeCategory->translation->description
+            ];
+            $response->message = 'Income category details loaded successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to load the income category details or there is no income category with this id.';
+        }
 
-        // if(!empty($currency)) {
-        //     $response->data = [
-        //         'id' => $currency->id,
-        //         'symbol' => $currency->symbol,
-        //         'shortSymbol' => $currency->short_symbol
-        //     ];
-        //     $response->message = 'Currency details loaded successfully.';
-        // }
-        // else {
-        //     $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        //     $response->message = 'An error occured while trying to load the currency details or there is no currency with such id.';
-        // }
-
-        // return $response;
+        return $response;
     }
 
     public function form(CurrencyFormRequest $request): ApiResponse {

@@ -17,18 +17,9 @@ class IncomeCategory extends Model {
         'is_active' => 1
     ];
 
-    public function translations(): HasMany {
-        return $this->hasMany(IncomeCategoryTranslation::class);
-    }
-
-    public function polishTranslation(): HasOne {
+    public function translation(): HasOne {
         return $this->hasOne(IncomeCategoryTranslation::class)
-                    ->where('language_id', Language::where('symbol', LanguageType::PL)->first()->id);
-    }
-
-    public function englishTranslation(): HasOne {
-        return $this->hasOne(IncomeCategoryTranslation::class)
-                    ->where('language_id', Language::where('symbol', LanguageType::EN)->first()->id);
+                    ->where('language_id', Language::where('symbol', app()->getLocale())->first()->id);
     }
 
     //test if it's correct

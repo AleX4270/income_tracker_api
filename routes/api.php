@@ -1,23 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\IncomeCategoryController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\IncomeController;
-use App\Models\IncomeCategory;
+use App\Http\Middleware\LanguageMiddleware;
 
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
     Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
     Route::get('/email/resend', [AuthController::class, 'resendEmail'])->name('verification.resend');
-
     Route::get('/password/request-reset', [AuthController::class, 'requestPasswordReset'])->name('password.reset');
     Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 });
@@ -36,6 +31,8 @@ Route::prefix('currency')->group(function() {
     Route::delete('', [CurrencyController::class, 'delete'])->middleware('auth:sanctum');
 });
 
-Route::prefix('incomeCategory')->group(function() {
-    Route::get('', [IncomeCategoryController::class, 'index'])->middleware('auth:sanctum');
+Route::middleware([LanguageMiddleware::class])->group(function() {
+    Route::prefix('incomeCategory')->group(function() {
+        Route::get('', [IncomeCategoryController::class, 'index'])->middleware('auth:sanctum');
+    });
 });
