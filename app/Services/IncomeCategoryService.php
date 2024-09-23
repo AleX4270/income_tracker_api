@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Interfaces\IncomeCategoryServiceInterface;
 use App\Models\IncomeCategory;
+use App\Models\IncomeCategoryTranslation;
+use App\Models\Language;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class IncomeCategoryService implements IncomeCategoryServiceInterface {
 
@@ -68,47 +71,68 @@ class IncomeCategoryService implements IncomeCategoryServiceInterface {
         }
     }
 
+    //This probably can be secured from creating an identical category.
     public function create(array $fieldSet): int | bool {
+        DB::beginTransaction();
         try {
-            // $currency = new Currency();
-            // $currency->symbol = $fieldSet['symbol'];
+            $incomeCategory = new IncomeCategory();
+            $incomeCategory->symbol = str()->random(24);
+            if(!$incomeCategory->save()) {
+                throw new Exception('Could not create a new income category entry.');
+            }
             
-            // if(!empty($fieldSet['shortSymbol'])) {
-            //     $currency->short_symbol = $fieldSet['shortSymbol'];
-            // }
-            
-            // if(!$currency->save()) {
-            //     throw new Exception('Could not create a new currency entry.');
-            // }
+            $currentLanguage = Language::where('symbol', app()->getLocale())->firstOrFail();
 
-            // return $currency->id;
+            $incomeCategoryTranslation = new IncomeCategoryTranslation();
+            $incomeCategoryTranslation->income_category_id = $incomeCategory->id;
+            $incomeCategoryTranslation->name = $fieldSet['name'];
+            $incomeCategoryTranslation->description = $fieldSet['description'];
+            $incomeCategoryTranslation->language_id = $currentLanguage->id;
+            
+            if(!$incomeCategoryTranslation->save()) {
+                throw new Exception('Could not save an income category translation entry.');
+            }
+
+            DB::commit();
+            return $incomeCategory->id;
         }
         catch(Exception $e) {
+            DB::rollBack();
             Log::error($e->getMessage());
             return false;
         }
     }
 
     public function update(array $fieldSet): int | bool {
+        DB::beginTransaction();
         try {
-            // $currency = Currency::where('id', $fieldSet['id'])->first();
-            // if(empty($currency)) {
-            //     throw new Exception('A currency with provided id does not exist.');
-            // }
+            //Strange. Maybe there is some other way to update the dates.
+            $incomeCategory = IncomeCategory::where('id', $fieldSet['id'])->firstOrFail();
+            if(!$incomeCategory->save()) {
+                throw new Exception('Could not update an existing income category entry.');
+            }
 
-            // $currency->symbol = $fieldSet['symbol'];
-            
-            // if(!empty($fieldSet['shortSymbol'])) {
-            //     $currency->short_symbol = $fieldSet['shortSymbol'];
-            // }
+            $incomeCategoryTranslation = IncomeCategoryTranslation::where('income_category_id', $incomeCategory->id)->first();
+            if(empty($incomeCategoryTranslation)) {
+                $incomeCategoryTranslation = new IncomeCategoryTranslation();
+            }
 
-            // if(!$currency->save()) {
-            //     throw new Exception('Could not update a currency entry.');
-            // }
+            $currentLanguage = Language::where('symbol', app()->getLocale())->firstOrFail();
 
-            // return $currency->id;
+            $incomeCategoryTranslation->income_category_id = $incomeCategory->id;
+            $incomeCategoryTranslation->name = $fieldSet['name'];
+            $incomeCategoryTranslation->description = $fieldSet['description'];
+            $incomeCategoryTranslation->language_id = $currentLanguage->id;
+
+            if(!$incomeCategoryTranslation->save()) {
+                throw new Exception('Could not save an income category translation entry.');
+            }
+
+            DB::commit();
+            return $incomeCategory->id;
         }
         catch(Exception $e) {
+            DB::rollBack();
             Log::error($e->getMessage());
             return false;
         }

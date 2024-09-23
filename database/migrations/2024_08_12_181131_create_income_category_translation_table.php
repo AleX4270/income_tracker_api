@@ -19,7 +19,7 @@ return new class extends Migration
                 table: 'language', indexName: 'income_category_translation_language_id'
             );
             $table->string('name', 255);
-            $table->string('description', 512);
+            $table->string('description', 512)->nullable();
         });
     }
 

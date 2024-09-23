@@ -7,6 +7,8 @@ use App\Http\Controllers\IncomeCategoryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Middleware\LanguageMiddleware;
 
+//TODO: Check if the sanctum middleware declaration can be shortened.
+
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
@@ -34,5 +36,8 @@ Route::prefix('currency')->group(function() {
 Route::middleware([LanguageMiddleware::class])->group(function() {
     Route::prefix('incomeCategory')->group(function() {
         Route::get('', [IncomeCategoryController::class, 'index'])->middleware('auth:sanctum');
+        Route::post('/form', [IncomeCategoryController::class, 'form'])->middleware('auth:sanctum');
+        Route::put('/form', [IncomeCategoryController::class, 'form'])->middleware('auth:sanctum');
+        Route::delete('', [IncomeCategoryController::class, 'delete'])->middleware('auth:sanctum');
     });
 });

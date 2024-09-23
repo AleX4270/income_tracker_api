@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class IncomeController extends Controller {
-    public function __construct(protected IncomeServiceInterface $incomeService)
-    {}
+    public function __construct(protected IncomeServiceInterface $incomeService) {}
 
     public function index(Request $request): ApiResponse {
         $id = $request->query("id");
         if (!empty($id)) {
             return $this->details($id);
-        } else {
+        } 
+        else {
             $validatedData = $request->validate(
                 (new IncomeListRequest())->rules()
             );
@@ -40,7 +40,8 @@ class IncomeController extends Controller {
                 "items" => $result,
             ];
             $response->message = "Income list loaded successfully.";
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
             $response->message =
                 "An error occured while trying to load the income list.";
@@ -76,7 +77,8 @@ class IncomeController extends Controller {
                 }),
             ];
             $response->message = "Income details loaded successfully.";
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
             $response->message =
                 "An error occured while trying to load the income details.";
@@ -91,12 +93,11 @@ class IncomeController extends Controller {
 
         if (!empty($params["id"]) && $request->isMethod(Request::METHOD_PUT)) {
             return $this->update($params);
-        } elseif (
-            empty($params["id"]) &&
-            $request->isMethod(Request::METHOD_POST)
-        ) {
+        } 
+        elseif (empty($params["id"]) && $request->isMethod(Request::METHOD_POST)) {
             return $this->create($params);
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_METHOD_NOT_ALLOWED;
             $response->message = "Invalid method.";
             return $response;
@@ -119,7 +120,8 @@ class IncomeController extends Controller {
                 "id" => $id,
             ];
             $response->message = "Income created successfully.";
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
             $response->message =
                 "An error occured while trying to create an income entry.";
@@ -144,7 +146,8 @@ class IncomeController extends Controller {
                 "id" => $id,
             ];
             $response->message = "Income updated successfully.";
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
             $response->message =
                 "An error occured while trying to update an income entry.";
@@ -171,7 +174,8 @@ class IncomeController extends Controller {
 
         if (!empty($isDeleted)) {
             $response->message = "Income deleted successfully.";
-        } else {
+        } 
+        else {
             $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
             $response->message =
                 "An error occured while trying to delete an income entry.";

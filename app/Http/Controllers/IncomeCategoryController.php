@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IncomeCategoryFormRequest;
 use App\Http\Requests\IncomeCategoryListRequest;
 use App\Interfaces\IncomeCategoryServiceInterface;
 use Illuminate\Http\Request;
@@ -76,71 +77,71 @@ class IncomeCategoryController extends Controller {
         return $response;
     }
 
-    public function form(CurrencyFormRequest $request): ApiResponse {
-        // $response = new ApiResponse();
-        // $params = $request->validated();
+    public function form(IncomeCategoryFormRequest $request): ApiResponse {
+        $response = new ApiResponse();
+        $params = $request->validated();
 
-        // if(!empty($params['id']) && $request->isMethod(Request::METHOD_PUT)) {
-        //     return $this->update($params);
-        // }
-        // else if(empty($params['id']) && $request->isMethod(Request::METHOD_POST)) {
-        //     return $this->create($params);
-        // }
-        // else {
-        //     $response->status = Response::HTTP_METHOD_NOT_ALLOWED;
-        //     $response->message = 'Invalid method.';
-        //     return $response;
-        // }
+        if(!empty($params['id']) && $request->isMethod(Request::METHOD_PUT)) {
+            return $this->update($params);
+        }
+        else if(empty($params['id']) && $request->isMethod(Request::METHOD_POST)) {
+            return $this->create($params);
+        }
+        else {
+            $response->status = Response::HTTP_METHOD_NOT_ALLOWED;
+            $response->message = 'Invalid method.';
+            return $response;
+        }
     }
 
     public function create(array $fieldSet): ApiResponse {
-        // $response = new ApiResponse();
+        $response = new ApiResponse();
 
-        // if(empty($fieldSet)) {
-        //     $response->status = Response::HTTP_BAD_REQUEST;
-        //     $response->message = 'Invalid arguments. Params must be provided.';
-        //     return $response;
-        // }
+        if(empty($fieldSet)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. Params must be provided.';
+            return $response;
+        }
 
-        // $id = $this->currencyService->create($fieldSet);
+        $id = $this->incomeCategoryService->create($fieldSet);
 
-        // if(!empty($id)) {
-        //     $response->data = [
-        //         'id' => $id
-        //     ];
-        //     $response->message = 'Currency created successfully.';
-        // }
-        // else {
-        //     $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        //     $response->message = 'An error occured while trying to create a currency entry.';
-        // }
+        if(!empty($id)) {
+            $response->data = [
+                'id' => $id
+            ];
+            $response->message = 'Income category created successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to create an income category entry.';
+        }
 
-        // return $response;
+        return $response;
     }
 
     public function update(array $params): ApiResponse {
-        // $response = new ApiResponse();
+        $response = new ApiResponse();
 
-        // if(empty($params)) {
-        //     $response->status = Response::HTTP_BAD_REQUEST;
-        //     $response->message = 'Invalid arguments. Params must be provided.';
-        //     return $response;
-        // }
+        if(empty($params)) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. Params must be provided.';
+            return $response;
+        }
 
-        // $id = $this->currencyService->update($params);
+        $id = $this->incomeCategoryService->update($params);
 
-        // if(!empty($id)) {
-        //     $response->data = [
-        //         'id' => $id
-        //     ];
-        //     $response->message = 'Currency updated successfully.';
-        // }
-        // else {
-        //     $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        //     $response->message = 'An error occured while trying to update a currency entry.';
-        // }
+        if(!empty($id)) {
+            $response->data = [
+                'id' => $id
+            ];
+            $response->message = 'Income category updated successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to update an income category entry.';
+        }
 
-        // return $response;
+        return $response;
     }
 
     public function delete(Request $request): ApiResponse {
