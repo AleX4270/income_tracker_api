@@ -113,12 +113,12 @@ class IncomeCategoryService implements IncomeCategoryServiceInterface {
             }
 
             $incomeCategoryTranslation = IncomeCategoryTranslation::where('income_category_id', $incomeCategory->id)->first();
+            
             if(empty($incomeCategoryTranslation)) {
                 $incomeCategoryTranslation = new IncomeCategoryTranslation();
             }
 
             $currentLanguage = Language::where('symbol', app()->getLocale())->firstOrFail();
-
             $incomeCategoryTranslation->income_category_id = $incomeCategory->id;
             $incomeCategoryTranslation->name = $fieldSet['name'];
             $incomeCategoryTranslation->description = $fieldSet['description'];
@@ -140,18 +140,14 @@ class IncomeCategoryService implements IncomeCategoryServiceInterface {
 
     public function delete(int $id): bool {
         try {
-            // $currency = Currency::where('id', $id)->first();
-            // if(empty($currency)) {
-            //     throw new Exception('A currency with provided id does not exist.');
-            // }
-
-            // $currency->is_active = 0;
+            $incomeCategory = IncomeCategory::where('id', $id)->firstOrFail();
+            $incomeCategory->is_active = 0;
             
-            // if(!$currency->save()) {
-            //     throw new Exception('Could not update a currency entry.');
-            // }
+            if(!$incomeCategory->save()) {
+                throw new Exception('Could not update an income category entry.');
+            }
 
-            // return true;
+            return true;
         }
         catch(Exception $e) {
             Log::error($e->getMessage());

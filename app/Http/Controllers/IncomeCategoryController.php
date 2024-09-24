@@ -7,8 +7,8 @@ use App\Http\Requests\IncomeCategoryListRequest;
 use App\Interfaces\IncomeCategoryServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
-use App\Types\LanguageType;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
 
 class IncomeCategoryController extends Controller {
     public function __construct(
@@ -145,28 +145,28 @@ class IncomeCategoryController extends Controller {
     }
 
     public function delete(Request $request): ApiResponse {
-        // $response = new ApiResponse();
-        // $validator = Validator::make($request->all(), [
-        //     'id' => ['required', 'numeric']
-        // ]);
+        $response = new ApiResponse();
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'numeric']
+        ]);
 
-        // if($validator->fails()) {
-        //     $response->status = Response::HTTP_BAD_REQUEST;
-        //     $response->message = 'Invalid arguments. Numeric id must be provided.';
-        //     return $response;
-        // }
+        if($validator->fails()) {
+            $response->status = Response::HTTP_BAD_REQUEST;
+            $response->message = 'Invalid arguments. Numeric id must be provided.';
+            return $response;
+        }
         
-        // $validatedData = $validator->validated();
-        // $isDeleted = $this->currencyService->delete($validatedData['id']);
+        $validatedData = $validator->validated();
+        $isDeleted = $this->incomeCategoryService->delete($validatedData['id']);
 
-        // if(!empty($isDeleted)) {
-        //     $response->message = 'Currency deleted successfully.';
-        // }
-        // else {
-        //     $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        //     $response->message = 'An error occured while trying to delete a currency entry.';
-        // }
+        if(!empty($isDeleted)) {
+            $response->message = 'Income category deleted successfully.';
+        }
+        else {
+            $response->status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $response->message = 'An error occured while trying to delete an income category entry.';
+        }
 
-        // return $response;
+        return $response;
     }
 }

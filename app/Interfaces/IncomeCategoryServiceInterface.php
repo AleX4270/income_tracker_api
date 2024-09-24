@@ -10,5 +10,5 @@ interface IncomeCategoryServiceInterface {
     public function details(int $currencyId): IncomeCategory | bool;
     public function create(array $fieldSet): int | bool;
     public function update(array $fieldSet): int | bool;
-    public function delete(int $id): bool; 
+    public function delete(int $id): bool;
 }
