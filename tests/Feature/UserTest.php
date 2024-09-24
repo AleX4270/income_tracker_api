@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
+//TODO: Add mock support.
 class UserTest extends TestCase {
     use DatabaseTransactions; //A trait to make test in a "transaction".
 
